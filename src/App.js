@@ -1,9 +1,7 @@
+import { Chart } from "./components/Chart/Chart";
+
 const App = () => {
-  return (
-    <>
-      <h1>Placeholder</h1>
-    </>
-  );
+  return <Chart />;
 };
 
 export default App;
