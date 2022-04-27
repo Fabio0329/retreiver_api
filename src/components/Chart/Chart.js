@@ -11,16 +11,40 @@ export const Chart = () => {
   const [userList, setUserList] = useState([]);
   const [selectedUser, setSelectedUser] = useState("");
   const [orders, setOrders] = useState([]);
+  const [orderStatus, setOrderStatus] = useState([0, 0, 0, 0]);
+
+  const getOrderStatus = (shipmentsArray) => {
+    const orderStatusArr = [0, 0, 0, 0];
+    shipmentsArray.forEach(({ shipments }) => {
+      shipments.forEach((shipment) => {
+        if (shipment.box_shipped_at && !shipment.box_delivered_at) {
+          orderStatusArr[0] += 1;
+        } else if (shipment.box_delivered_at && !shipment.device_shipped_at) {
+          orderStatusArr[1] += 1;
+        } else if (
+          shipment.device_shipped_at &&
+          !shipment.device_delivered_at
+        ) {
+          orderStatusArr[2] += 1;
+        } else if (shipment.device_delivered_at) {
+          orderStatusArr[3] += 1;
+        }
+      });
+    });
+    setOrderStatus(orderStatusArr);
+  };
 
   const getOrders = async () => {
     const fetched_users = await fetch("http://localhost:8000/api/");
     const json_users = await fetched_users.json();
     setUserList(json_users.users);
+    setSelectedUser(json_users.users[0]);
     const fetched_orders = await fetch(
       `http://localhost:8000/api/user/${json_users.users[0]}`
     );
     const json_orders = await fetched_orders.json();
     setOrders(json_orders);
+    getOrderStatus(json_orders);
   };
 
   const updateOrders = async () => {
@@ -29,6 +53,7 @@ export const Chart = () => {
     );
     const json_orders = await fetched_orders.json();
     setOrders(json_orders);
+    getOrderStatus(json_orders);
   };
 
   useEffect(() => {
@@ -43,11 +68,16 @@ export const Chart = () => {
   }, [selectedUser]);
 
   const data = {
-    labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+    labels: [
+      "Box Shipped",
+      "Box Delivered",
+      "Device Shipped",
+      "Device Delievered",
+    ],
     datasets: [
       {
         label: "# of Votes",
-        data: [12, 19, 3, 5, 2, 3],
+        data: orderStatus,
         backgroundColor: [
           "rgba(255, 99, 132, 0.2)",
           "rgba(54, 162, 235, 0.2)",
@@ -69,13 +99,15 @@ export const Chart = () => {
     ],
   };
 
+  // getOrderStatus(orders);
+
   return (
     <Container>
       <Row>
         <Col className="text-center">
           <Pie
             data={data}
-            width={"100%"}
+            width={"30%"}
             options={{ maintainAspectRatio: false }}
           />
         </Col>
