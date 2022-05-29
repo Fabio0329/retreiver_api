@@ -1,16 +1,11 @@
 import { useState, useEffect } from "react";
-import Container from "react-bootstrap/Container";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Pie } from "react-chartjs-2";
+import "./Chart.css";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-export const Chart = () => {
-  const [userList, setUserList] = useState([]);
-  const [selectedUser, setSelectedUser] = useState("");
-  const [orders, setOrders] = useState([]);
+export const Chart = ({ selectedUser }) => {
   const [orderStatus, setOrderStatus] = useState([0, 0, 0, 0]);
 
   const getOrderStatus = (shipmentsArray) => {
@@ -35,35 +30,16 @@ export const Chart = () => {
   };
 
   const getOrders = async () => {
-    const fetched_users = await fetch("http://localhost:8000/api/");
-    const json_users = await fetched_users.json();
-    setUserList(json_users.users);
-    setSelectedUser(json_users.users[0]);
-    const fetched_orders = await fetch(
-      `http://localhost:8000/api/user/${json_users.users[0]}`
-    );
-    const json_orders = await fetched_orders.json();
-    setOrders(json_orders);
-    getOrderStatus(json_orders);
-  };
-
-  const updateOrders = async () => {
     const fetched_orders = await fetch(
       `http://localhost:8000/api/user/${selectedUser}`
     );
     const json_orders = await fetched_orders.json();
-    setOrders(json_orders);
     getOrderStatus(json_orders);
   };
 
   useEffect(() => {
-    getOrders();
-  }, []);
-
-  useEffect(() => {
     if (selectedUser) {
-      updateOrders();
-    } else {
+      getOrders();
     }
   }, [selectedUser]);
 
@@ -76,7 +52,7 @@ export const Chart = () => {
     ],
     datasets: [
       {
-        label: "# of Votes",
+        label: "Order Status",
         data: orderStatus,
         backgroundColor: [
           "rgba(255, 99, 132, 0.2)",
@@ -99,34 +75,27 @@ export const Chart = () => {
     ],
   };
 
-  // getOrderStatus(orders);
-
   return (
-    <Container>
-      <Row>
-        <Col className="text-center">
-          <Pie
-            data={data}
-            width={"30%"}
-            options={{ maintainAspectRatio: false }}
-          />
-        </Col>
-      </Row>
-      <Row>
-        <Col>
-          <select
-            className="form-select"
-            aria-label="Default select example"
-            onChange={(e) => setSelectedUser(e.target.value)}
-          >
-            {userList.map((user) => (
-              <option value={user} key={userList.indexOf(user)}>
-                {user}
-              </option>
-            ))}
-          </select>
-        </Col>
-      </Row>
-    </Container>
+    <>
+      <div className="chartContainer">
+        <h3>
+          Order Total:{" "}
+          {orderStatus.reduce((acc, currentVal) => {
+            return acc + currentVal;
+          }, 0)}
+        </h3>
+        <Pie
+          data={data}
+          options={{
+            plugins: {
+              legend: {
+                display: true,
+                position: "bottom",
+              },
+            },
+          }}
+        />
+      </div>
+    </>
   );
 };

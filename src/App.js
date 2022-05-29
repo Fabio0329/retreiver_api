@@ -1,7 +1,7 @@
-import { Chart } from "./components/Chart/Chart";
+import { Dashboard } from "./components/Dashboard/Dashboard";
 
 const App = () => {
-  return <Chart />;
+  return <Dashboard />;
 };
 
 export default App;
