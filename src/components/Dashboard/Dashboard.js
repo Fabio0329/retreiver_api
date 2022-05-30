@@ -1,3 +1,4 @@
+// Modules
 import { useState, useEffect } from "react";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
@@ -8,10 +9,12 @@ import { UserFilter } from "../UserFilter/UserFilter";
 import { OrdersTable } from "../OrdersTable/OrdersTable";
 import "./Dashboard.css";
 
+// Component that displays a dashboard for monitoring Retriever order status
 export const Dashboard = () => {
   const [userList, setUserList] = useState([]);
   const [selectedUser, setSelectedUser] = useState("");
 
+  // Fetches the current list of users and sets the initial selected user
   const getUsers = async () => {
     const fetched_users = await fetch("http://localhost:8000/api/userList");
     const users_json = await fetched_users.json();
@@ -19,6 +22,7 @@ export const Dashboard = () => {
     setSelectedUser(users_json[0]);
   };
 
+  // Calls getUsers on component mount
   useEffect(() => {
     getUsers();
   }, []);
