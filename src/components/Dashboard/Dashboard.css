@@ -9,3 +9,7 @@
     align-items: center;
     justify-content: center;
 }
+
+.container_main {
+    height: 100vh
+}

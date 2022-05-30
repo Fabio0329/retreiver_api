@@ -5,6 +5,7 @@ import Col from "react-bootstrap/Col";
 import Navbar from "react-bootstrap/Navbar";
 import { Chart } from "../Chart/Chart";
 import { UserFilter } from "../UserFilter/UserFilter";
+import { OrdersTable } from "../OrdersTable/OrdersTable";
 import "./Dashboard.css";
 
 export const Dashboard = () => {
@@ -29,7 +30,7 @@ export const Dashboard = () => {
           <Navbar.Brand>Retriever Dashboard (Alpha)</Navbar.Brand>
         </Container>
       </Navbar>
-      <Container>
+      <Container className="container_main">
         <Row>
           <Col className="chartColumn">
             <Chart selectedUser={selectedUser} />
@@ -38,7 +39,11 @@ export const Dashboard = () => {
             <UserFilter userList={userList} setSelectedUser={setSelectedUser} />
           </Col>
         </Row>
-        <Row></Row>
+        <Row className="pt-3">
+          <Col>
+            <OrdersTable selectedUser={selectedUser} />
+          </Col>
+        </Row>
       </Container>
     </>
   );

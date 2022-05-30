@@ -1,4 +1,5 @@
 import ListGroup from "react-bootstrap/ListGroup";
+import "./UserFilter.css";
 
 export const UserFilter = ({ userList, setSelectedUser }) => {
   return (
